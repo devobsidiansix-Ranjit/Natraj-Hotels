@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v2.10
+    container_name: traefik
+    restart: unless-stopped
+    command:
+      - "--api.insecure=false"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      # Redirect HTTP to HTTPS automatically
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      # Let's Encrypt configuration
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./letsencrypt:/letsencrypt"
+    networks:
+      - web
+
+  hotel-natraj-app:
+    build: .
+    container_name: hotel-natraj-app
+    restart: unless-stopped
+    env_file:
+      - .env # Use the .env file in the same directory
+    environment:
+      # If you need to override or add specific environment variables, add them here
+      - NODE_ENV=production
+    labels:
+      - "traefik.enable=true"
+      # IMPORTANT: Replace hotelnatraj.com with your actual domain name
+      - "traefik.http.routers.app.rule=Host(`natrajhotels.obsidiansix.com`)"
+      - "traefik.http.routers.app.entrypoints=websecure"
+      - "traefik.http.routers.app.tls.certresolver=myresolver"
+      - "traefik.http.services.app.loadbalancer.server.port=3000"
+    networks:
+      - web
+    depends_on:
+      - traefik
+
+networks:
+  web:
+    name: web_network
