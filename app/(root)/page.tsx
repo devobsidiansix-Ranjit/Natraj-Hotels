@@ -1,11 +1,11 @@
 export const dynamic = 'force-dynamic';
-import dynamic from "next/dynamic";
+import NextDynamic from "next/dynamic";
 import HeroSection from "./components/hero-section";
 import FilterSection from "./components/filter-section";
 
-const OurServices = dynamic(() => import("./components/our-services"));
-const ReviewSection = dynamic(() => import("./components/review-section"));
-const WhyChooseUs = dynamic(() => import("./components/why-us"));
+const OurServices = NextDynamic(() => import("./components/our-services"));
+const ReviewSection = NextDynamic(() => import("./components/review-section"));
+const WhyChooseUs = NextDynamic(() => import("./components/why-us"));
 
 export default function Home() {
   return (
