@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { options } from '@/app/api/auth/[...nextauth]/options'
 import { Minus } from 'lucide-react'
 import { getServerSession } from 'next-auth'

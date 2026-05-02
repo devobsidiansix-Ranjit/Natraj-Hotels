@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import nodemailer from 'nodemailer';
 import { roboto, robotoFlex } from "@/app/fonts";
 import prismadb from "@/lib/prismadb";
