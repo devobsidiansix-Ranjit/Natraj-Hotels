@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import dynamic from "next/dynamic";
 import HeroSection from "./components/hero-section";
 import FilterSection from "./components/filter-section";
