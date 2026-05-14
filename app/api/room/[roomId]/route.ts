@@ -7,7 +7,7 @@ export async function PATCH(req: Request, { params }: { params: { roomId: string
         const body = await req.json();
         const roomId = params.roomId
         if (!roomId) return new NextResponse("invalid room", { status: 409 })
-        const { categoryId, imageName, isFeatured } = body;
+        const { categoryId, image, isFeatured, description, features, rating } = body;
         if (!categoryId) {
             return new NextResponse("Missing required fields", { status: 400 })
         }
@@ -25,8 +25,11 @@ export async function PATCH(req: Request, { params }: { params: { roomId: string
                 name: String(existingCategory?.name),
                 price: Number(existingCategory?.price),
                 categoryId: existingCategory?.id,
-                image: imageName,
-                isFeatured: isFeatured
+                image: image,
+                isFeatured: isFeatured,
+                description: description,
+                features: features,
+                rating: rating ? Number(rating) : undefined
             }
         })
         return NextResponse.json({ success: true, room })

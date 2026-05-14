@@ -13,6 +13,14 @@ const nextConfig = {
           protocol: 'https',
           hostname: 'media.istockphoto.com',
         },
+        {
+          protocol: 'https',
+          hostname: 'natrajhotels.obsidiansix.com',
+        },
+        {
+          protocol: 'http',
+          hostname: 'localhost',
+        },
       ],
     }
   }

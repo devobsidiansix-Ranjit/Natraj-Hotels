@@ -12,6 +12,7 @@ import Link from "next/link";
 import { robotoFlex } from "../../fonts";
 import prismadb from "@/lib/prismadb";
 import { format } from "date-fns";
+import { getImageUrl } from "@/lib/utils";
 
 const FilterSection = async () => {
   const roomDetails = await prismadb.room.findMany({
@@ -22,7 +23,6 @@ const FilterSection = async () => {
   const startDate = new Date();
   const endDate = new Date();
 
-  const fallbackSrc = "./assets/rooms/room (4).jpeg";
   const formattedStartDate = format(startDate, "yyyy-MM-dd");
   const formattedEndDate = format(endDate, "yyyy-MM-dd");
   return (
@@ -45,7 +45,7 @@ const FilterSection = async () => {
             <CardHeader>
               <div className="h-[200px] w-full relative">
                 <Image
-                  src={data.image ? (data.image.startsWith('/') || data.image.startsWith('http') ? data.image : `/assets/rooms/${data.image}`) : fallbackSrc}
+                  src={getImageUrl(data.image ?? undefined)}
                   alt=""
                   fill
                   loading="lazy"
