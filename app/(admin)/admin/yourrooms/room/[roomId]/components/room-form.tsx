@@ -25,6 +25,7 @@ const formSchema = z.object({
 type RoomFormValues = z.infer<typeof formSchema>
 export const RoomForm: React.FC<RoomFormProps> = ({ intialData, categories }) => {
     const [loading, setLoading] = useState(false)
+    const [isUploading, setIsUploading] = useState(false);
     const router = useRouter();
     const { toast } = useToast()
     const title = intialData ? "Edit Room" : "Create a Room"
@@ -102,12 +103,49 @@ export const RoomForm: React.FC<RoomFormProps> = ({ intialData, categories }) =>
                                 <FormField
                                     name="imageName"
                                     control={form.control}
-                                    render={({ field }) => (<FormItem>
-                                        <FormControl>
-                                            <Input disabled={loading} placeholder="Enter Image Name" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>)}
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Image URL or Upload</FormLabel>
+                                            <FormControl>
+                                                <div className="flex flex-col gap-3">
+                                                    <Input disabled={loading || isUploading} placeholder="Enter Image Name" {...field} />
+                                                    <div className="flex items-center gap-4">
+                                                        <span className="text-sm text-gray-500 font-medium">OR Upload:</span>
+                                                        <Input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            disabled={loading || isUploading}
+                                                            className="cursor-pointer"
+                                                            onChange={async (e) => {
+                                                                const file = e.target.files?.[0];
+                                                                if (!file) return;
+                                                                try {
+                                                                    setIsUploading(true);
+                                                                    const formData = new FormData();
+                                                                    formData.append("file", file);
+                                                                    const res = await axios.post("/api/upload", formData);
+                                                                    field.onChange(res.data.fileUrl);
+                                                                    toast({
+                                                                        title: "Success",
+                                                                        description: "Image uploaded successfully",
+                                                                    });
+                                                                } catch (err) {
+                                                                    toast({
+                                                                        title: "Error",
+                                                                        description: "Failed to upload image",
+                                                                        variant: "destructive",
+                                                                    });
+                                                                } finally {
+                                                                    setIsUploading(false);
+                                                                }
+                                                            }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
                                 />
                                 <FormField
                                     control={form.control}

@@ -18,7 +18,7 @@ export default function Page() {
       </div>
       <div className='hidden lg:flex lg:w-1/2'>
         <div className='relative h-screen w-full'>
-          <Image src={'/assets/images/signup-img.jpg'} alt='' fill className='object-cover rounded-tl-3xl rounded-bl-3xl' />
+          <Image src={'/assets/images/signup-img.jpg'} alt='' fill unoptimized className='object-cover rounded-tl-3xl rounded-bl-3xl' />
         </div>
       </div>
     </main>

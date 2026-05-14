@@ -68,7 +68,7 @@ export default async function Page({ searchParams }: { searchParams: { id: strin
     return (
         <>
             <div className='h-[600px] w-full relative flex justify-center items-center'>
-                <Image src={category?.images && category.images.length > 0 ? `/assets/rooms/${category.images[0]}` : '/assets/rooms/room (4).jpeg'} alt='' fill className='object-cover' />
+                <Image src={category?.images && category.images.length > 0 ? (category.images[0].startsWith('/') || category.images[0].startsWith('http') ? category.images[0] : `/assets/rooms/${category.images[0]}`) : '/assets/rooms/room (4).jpeg'} alt='' fill className='object-cover' />
             </div>
             <div className='px-6 lg:px-0 relative -top-20 z-50'>
                 <div className='w-full max-w-6xl mx-auto bg-white py-6 sm:py-10 flex flex-col gap-10 px-6 shadow-[0_4px_16px_0_rgba(0,57,123,0.25)]'>

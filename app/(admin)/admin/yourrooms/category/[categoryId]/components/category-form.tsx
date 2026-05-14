@@ -42,6 +42,7 @@ interface ColorsFormProps {
 
 export const CategoryForm: React.FC<ColorsFormProps> = ({ intialData }) => {
   const [loading, setLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const router = useRouter();
   const title = intialData ? "Edit Category" : "Create a Category";
   const description = intialData
@@ -234,17 +235,51 @@ export const CategoryForm: React.FC<ColorsFormProps> = ({ intialData }) => {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input
-                            disabled={loading}
-                            placeholder={`Image URL ${index + 1}`}
-                            {...field}
-                          />
+                          <div className="flex flex-col gap-3">
+                            <Input
+                              disabled={loading || isUploading}
+                              placeholder={`Image URL ${index + 1}`}
+                              {...field}
+                            />
+                            <div className="flex items-center gap-4">
+                              <span className="text-sm text-gray-500 font-medium">OR Upload:</span>
+                              <Input
+                                type="file"
+                                accept="image/*"
+                                disabled={loading || isUploading}
+                                className="cursor-pointer"
+                                onChange={async (e) => {
+                                  const file = e.target.files?.[0];
+                                  if (!file) return;
+                                  try {
+                                    setIsUploading(true);
+                                    const formData = new FormData();
+                                    formData.append("file", file);
+                                    const res = await axios.post("/api/upload", formData);
+                                    field.onChange(res.data.fileUrl);
+                                    toast({
+                                      title: "Success",
+                                      description: "Image uploaded successfully",
+                                    });
+                                  } catch (err) {
+                                    toast({
+                                      title: "Error",
+                                      description: "Failed to upload image",
+                                      variant: "destructive",
+                                    });
+                                  } finally {
+                                    setIsUploading(false);
+                                  }
+                                }}
+                              />
+                            </div>
+                          </div>
                         </FormControl>
                         <FormMessage />
                         <Button
                           type="button"
                           onClick={() => removeImage(index)}
-                          disabled={loading}
+                          disabled={loading || isUploading}
                           className="mt-2 text-white my-2"
                         >
                           Remove Image

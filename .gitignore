@@ -36,3 +36,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# ignore uploaded images but keep folder structure
+public/uploads/*
+!public/uploads/.gitkeep

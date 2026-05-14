@@ -115,8 +115,7 @@ export default function PaymentCard({
     try {
       setLoading(true);
       const key = await axios.post("/api/getkey");
-      const { endpoint } = await (await axios.post("/api/getendpoint")).data;
-      const response = await axios.post(`${endpoint}/api/checkout`, {
+      const response = await axios.post(`/api/checkout`, {
         amount,
       });
       const { order } = response.data;

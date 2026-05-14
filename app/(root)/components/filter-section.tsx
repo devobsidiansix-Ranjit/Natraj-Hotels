@@ -45,7 +45,7 @@ const FilterSection = async () => {
             <CardHeader>
               <div className="h-[200px] w-full relative">
                 <Image
-                  src={data.image ? data.image : fallbackSrc}
+                  src={data.image ? (data.image.startsWith('/') || data.image.startsWith('http') ? data.image : `/assets/rooms/${data.image}`) : fallbackSrc}
                   alt=""
                   fill
                   loading="lazy"
