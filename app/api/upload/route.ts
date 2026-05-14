@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     const fileExtension = file.name.split('.').pop() || 'jpg';
     const uniqueFilename = `${uuidv4()}.${fileExtension}`;
     
-    const uploadDir = path.join(process.cwd(), "public/uploads");
+    const uploadDir = path.join(process.cwd(), "uploads");
     
     // Ensure directory exists
     if (!fs.existsSync(uploadDir)) {

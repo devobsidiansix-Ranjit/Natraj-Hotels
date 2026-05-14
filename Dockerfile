@@ -1,50 +1,41 @@
-FROM node:18-slim AS deps
-RUN apt-get update && apt-get install -y openssl ca-certificates
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+# 1. Base image with Alpine for smallest footprint and fastest pulls
+FROM node:22-alpine AS base
+RUN apk add --no-network --no-cache libc6-compat openssl
 WORKDIR /app
 
-# Install dependencies based on the preferred package manager
+# 2. Dependencies - Only runs when package.json or prisma schema changes
+FROM base AS deps
 COPY package.json package-lock.json* ./
-RUN npm ci
-
-# Rebuild the source code only when needed
-FROM node:18-slim AS builder
-RUN apt-get update && apt-get install -y openssl ca-certificates
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-
-# Generate Prisma client
+COPY prisma ./prisma/
+# Mount cache for faster npm installs in future builds
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
+# Generate Prisma client here so it's cached with node_modules
 RUN npx prisma generate
 
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
+# 3. Builder - Rebuilds only when source code changes
+FROM base AS builder
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
 ENV NEXT_TELEMETRY_DISABLED 1
-
 RUN npm run build
 
-# Production image, copy all the files and run next
-FROM node:18-slim AS runner
-RUN apt-get update && apt-get install -y openssl ca-certificates
-WORKDIR /app
-
+# 4. Runner - The final production image (Ultra-slim)
+FROM base AS runner
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy essential files from builder
-COPY --from=builder /app/next.config.js ./
+# Set permissions for the standalone server
 COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/prisma ./prisma
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
-
 EXPOSE 3000
 ENV PORT 3000
 
-CMD ["npm", "start"]
+# Use the standalone server entry point for maximum performance
+CMD ["node", "server.js"]

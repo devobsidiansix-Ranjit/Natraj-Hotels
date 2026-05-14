@@ -16,7 +16,7 @@ services:
       - "traefik.http.routers.natraj-hotel.tls.certresolver=myresolver"
       - "traefik.http.services.natraj-hotel.loadbalancer.server.port=3000"
     volumes:
-      - /var/www/natraj-hotel-data:/app/public/uploads
+      - /var/www/natraj-hotel-data:/app/uploads
     networks:
       - web
 

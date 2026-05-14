@@ -38,5 +38,5 @@ yarn-error.log*
 next-env.d.ts
 
 # ignore uploaded images but keep folder structure
-public/uploads/*
-!public/uploads/.gitkeep
+uploads/*
+!uploads/.gitkeep
