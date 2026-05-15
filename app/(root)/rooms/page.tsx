@@ -9,6 +9,7 @@ import { Category } from "@prisma/client";
 import DateSelector from "./components/date-selector";
 import { fetchCategories } from "@/functions/fetchcategory";
 import { getImageUrl } from "@/lib/utils";
+import { ImageSlider } from "@/components/image-slider";
 
 export default async function Page({
   searchParams,
@@ -31,13 +32,9 @@ export default async function Page({
           <div key={data.id}>
             <div className="w-full grid sm:grid-cols-12 shadow-[0_4px_15px_0_rgba(0,0,0,0.14)] rounded-sm overflow-hidden">
               <div className="relative h-[300px] sm:h-full w-full sm:col-span-5">
-                <Image
-                
-                  src={getImageUrl(data?.images?.[0])}
+                <ImageSlider
+                  images={data.images}
                   alt={data.name || "room image"}
-                  fill
-                  className="object-cover"
-                  priority={true}
                 />
               </div>
               <div className="sm:col-span-7 px-4 sm:px-6 lg:px-8 flex flex-col gap-6 py-4 lg:py-8">
