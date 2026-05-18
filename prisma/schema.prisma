@@ -66,14 +66,26 @@ model BookingRoom {
 }
 
 model Category {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  price       Float
-  rooms       Room[]
-  features    String[]
-  description String?
-  images      String[] @default([])
-  status      Boolean  @default(true)
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  price        Float
+  rooms        Room[]
+  features     String[]
+  description  String?
+  images       String[]      @default([])
+  status       Boolean       @default(true)
+  blockedRooms BlockedRoom[]
+}
+
+model BlockedRoom {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  startDate  DateTime
+  endDate    DateTime
+  categoryId String   @db.ObjectId
+  category   Category @relation(fields: [categoryId], references: [id])
+  count      Int      @default(1)
+  reason     String?  @default("")
+  createdAt  DateTime @default(now())
 }
 
 model Plan {

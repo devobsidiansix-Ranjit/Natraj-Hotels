@@ -28,6 +28,18 @@ const AdminSidebar = ({ categoreis }: AdminSidebarProps) => {
       svgName: "group.png",
     },
     {
+      label: "Front Desk",
+      href: "/admin/frontdesk",
+      active: path === "/admin/frontdesk",
+      svgName: "guests.png",
+    },
+    {
+      label: "Inventory Calendar",
+      href: "/admin/inventory",
+      active: path === "/admin/inventory",
+      svgName: "rooms.png",
+    },
+    {
       label: "All Bookings",
       href: "/admin",
       active: path === "/admin",
